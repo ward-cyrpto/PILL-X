@@ -1,0 +1,17 @@
+{
+  "name": "pill-x",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "contracts"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=frontend",
+    "build": "npm run build --workspace=frontend",
+    "start": "npm run start --workspace=frontend",
+    "generate:serials": "node scripts/generate-serials.js",
+    "generate:metadata": "node scripts/generate-metadata.js",
+    "deploy:contracts": "npm run deploy --workspace=contracts"
+  }
+}

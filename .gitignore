@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+.next/
+out/
+dist/
+build/
+
+# Environment — NEVER commit secrets
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Hardhat
+contracts/artifacts/
+contracts/cache/
+contracts/deployments/
+
+# Generated metadata (large — host separately or in object storage)
+metadata/tokens/
+metadata/serials.json
+
+# Misc
+.DS_Store
+*.log
+npm-debug.log*
+yarn-error.log
+.vercel
+coverage/
+typechain-types/
