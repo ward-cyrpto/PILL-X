@@ -13,7 +13,8 @@ interface TokenMeta {
 }
 
 async function fetchMeta(id: string): Promise<TokenMeta | null> {
-  const base = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  // Use INTERNAL_API_BASE_URL for server-side fetches to avoid SSRF
+  const base = process.env.INTERNAL_API_BASE_URL || "http://localhost:3000";
   try {
     const res = await fetch(`${base}/api/metadata/${id}`, { next: { revalidate: 86400 } });
     if (!res.ok) return null;
@@ -65,7 +66,7 @@ export default async function PillPage({ params }: { params: { id: string } }) {
               >
                 {tier} Edition
               </h1>
-              <p className="text-white/70 text-sm mt-1">{meta.description.slice(0, 120)}…</p>
+              <p className="text-white/70 text-sm mt-1">{meta.description.length > 120 ? `${meta.description.slice(0, 120)}…` : meta.description}</p>
             </div>
           </div>
 

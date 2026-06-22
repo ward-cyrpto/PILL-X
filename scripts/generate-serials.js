@@ -3,7 +3,7 @@
  * generate-serials.js
  * Generates 40,000 unique NFC serial numbers for PILL-X pills.
  *
- * Output: scripts/serials.json  (tiered batches)
+ * Output: metadata/serials.json  (tiered batches)
  *
  * Format: each serial is a 12-character uppercase hex string
  * (like a real NFC UID-7 or custom serial).

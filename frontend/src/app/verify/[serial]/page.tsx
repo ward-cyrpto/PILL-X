@@ -9,10 +9,11 @@ import { redirect } from "next/navigation";
 export default async function VerifySerialPage({ params }: { params: { serial: string } }) {
   const serial = params.serial.toUpperCase().trim();
 
-  // Try to resolve the serial server-side
-  const base = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  // Resolve the serial server-side using an internal (non-public) base URL
+  // to avoid SSRF via a user-controlled NEXT_PUBLIC_BASE_URL.
+  const internalBase = process.env.INTERNAL_API_BASE_URL || "http://localhost:3000";
   try {
-    const res  = await fetch(`${base}/api/verify/${serial}`, { cache: "no-store" });
+    const res  = await fetch(`${internalBase}/api/verify/${serial}`, { cache: "no-store" });
     const data = await res.json();
     if (data.found && data.tokenId) {
       redirect(`/pill/${data.tokenId}`);

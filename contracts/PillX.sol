@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
 
 /**
  * @title PillX
@@ -15,6 +16,7 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
  *      and multi-chain deployment support (Ethereum, Polygon, BSC, Avalanche, etc.)
  */
 contract PillX is ERC721, ERC721URIStorage, ERC721Royalty, Ownable, ReentrancyGuard, Pausable {
+    using Address for address payable;
 
     // ─── Tier Definitions ─────────────────────────────────────────────────────
 
@@ -128,9 +130,8 @@ contract PillX is ERC721, ERC721URIStorage, ERC721Royalty, Ownable, ReentrancyGu
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, uri);
 
-        // Forward payment to recipient
-        (bool sent, ) = payable(paymentRecipient).call{value: msg.value}("");
-        require(sent, "PillX: payment transfer failed");
+        // Forward payment to recipient using Address.sendValue (safer than low-level call)
+        payable(paymentRecipient).sendValue(msg.value);
 
         emit PillMinted(msg.sender, tokenId, tier, serial);
     }

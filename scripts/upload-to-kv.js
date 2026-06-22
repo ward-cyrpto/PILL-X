@@ -19,6 +19,7 @@
 
 const fs   = require("fs");
 const path = require("path");
+const os   = require("os");
 const { execSync } = require("child_process");
 
 const SERIALS_FILE    = path.join(__dirname, "..", "metadata", "serials.json");
@@ -49,7 +50,7 @@ console.log(`Total entries to upload: ${allPairs.length}`);
 
 for (let i = 0; i < allPairs.length; i += BATCH_SIZE) {
   const batch    = allPairs.slice(i, i + BATCH_SIZE);
-  const tmpFile  = `/tmp/kv-batch-${i}.json`;
+  const tmpFile  = path.join(os.tmpdir(), `kv-batch-${i}.json`);
   fs.writeFileSync(tmpFile, JSON.stringify(batch));
 
   console.log(`Uploading batch ${i / BATCH_SIZE + 1} (${batch.length} entries)…`);
