@@ -4,10 +4,8 @@ import { useEffect, useState } from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { TIERS, Tier } from "@/lib/tiers";
 
-const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
-if (!PAYPAL_CLIENT_ID && typeof window !== "undefined") {
-  console.error("NEXT_PUBLIC_PAYPAL_CLIENT_ID is not set. PayPal checkout will not function.");
-}
+const PAYPAL_CLIENT_ID   = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+const PAYPAL_PAYEE_EMAIL = process.env.NEXT_PUBLIC_PAYPAL_PAYEE_EMAIL;
 
 interface Props {
   tier: Tier;
@@ -133,9 +131,14 @@ export default function CheckoutModal({ tier, onClose }: Props) {
                 <div className="text-gray-500 text-sm">Secure checkout — ${tierInfo.price.toLocaleString()} USD</div>
               </div>
 
+              {(!PAYPAL_CLIENT_ID || !PAYPAL_PAYEE_EMAIL) ? (
+                <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm text-center">
+                  PayPal is not configured. Please contact support.
+                </div>
+              ) : (
               <PayPalScriptProvider
                 options={{
-                  clientId: PAYPAL_CLIENT_ID ?? "",
+                  clientId: PAYPAL_CLIENT_ID,
                   currency: "USD",
                   intent:   "capture",
                 }}
@@ -152,7 +155,7 @@ export default function CheckoutModal({ tier, onClose }: Props) {
                             currency_code: "USD",
                             value:         tierInfo.price.toFixed(2),
                           },
-                          payee: { email_address: process.env.NEXT_PUBLIC_PAYPAL_PAYEE_EMAIL || "warddavis030-4@gmail.com" },
+                          payee: { email_address: PAYPAL_PAYEE_EMAIL },
                         },
                       ],
                     })
@@ -170,6 +173,7 @@ export default function CheckoutModal({ tier, onClose }: Props) {
                   onCancel={() => setStep("details")}
                 />
               </PayPalScriptProvider>
+              )}
 
               <button
                 onClick={() => setStep("details")}

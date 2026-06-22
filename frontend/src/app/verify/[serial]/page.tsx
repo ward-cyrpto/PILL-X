@@ -9,9 +9,12 @@ import { redirect } from "next/navigation";
 export default async function VerifySerialPage({ params }: { params: { serial: string } }) {
   const serial = params.serial.toUpperCase().trim();
 
-  // Resolve the serial server-side using an internal (non-public) base URL
-  // to avoid SSRF via a user-controlled NEXT_PUBLIC_BASE_URL.
-  const internalBase = process.env.INTERNAL_API_BASE_URL || "http://localhost:3000";
+  // Require an explicit internal base URL; never guess in production.
+  const internalBase = process.env.INTERNAL_API_BASE_URL;
+  if (!internalBase) {
+    // Cannot resolve serial server-side without config — fall back to client verify page
+    redirect(`/verify?serial=${serial}`);
+  }
   try {
     const res  = await fetch(`${internalBase}/api/verify/${serial}`, { cache: "no-store" });
     const data = await res.json();

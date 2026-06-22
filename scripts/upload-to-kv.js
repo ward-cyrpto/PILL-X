@@ -54,10 +54,16 @@ for (let i = 0; i < allPairs.length; i += BATCH_SIZE) {
   fs.writeFileSync(tmpFile, JSON.stringify(batch));
 
   console.log(`Uploading batch ${i / BATCH_SIZE + 1} (${batch.length} entries)…`);
-  execSync(
-    `wrangler kv:bulk put --namespace-id=${KV_NAMESPACE_ID} ${tmpFile}`,
-    { stdio: "inherit" }
-  );
+  try {
+    execSync(
+      `wrangler kv:bulk put --namespace-id=${KV_NAMESPACE_ID} ${tmpFile}`,
+      { stdio: "inherit" }
+    );
+  } catch (err) {
+    fs.unlinkSync(tmpFile);
+    console.error(`Batch ${i / BATCH_SIZE + 1} failed:`, err.message);
+    process.exit(1);
+  }
   fs.unlinkSync(tmpFile);
 }
 

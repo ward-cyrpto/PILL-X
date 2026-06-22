@@ -34,9 +34,12 @@ export async function POST(req: NextRequest) {
 
     // ── Determine tier from amount ────────────────────────────────────────
     let tier: "common" | "premium" | "gold";
-    if      (amountUSD >= 4999) tier = "gold";
-    else if (amountUSD >= 2499) tier = "premium";
-    else                        tier = "common";
+    if      (amountUSD >= 5000) tier = "gold";
+    else if (amountUSD >= 2500) tier = "premium";
+    else if (amountUSD >= 1000) tier = "common";
+    else {
+      return NextResponse.json({ error: "Payment amount does not match any tier" }, { status: 400 });
+    }
 
     // ── TODO: Trigger NFT mint ────────────────────────────────────────────
     // 1. Pull the next available serial for this tier from the DB
